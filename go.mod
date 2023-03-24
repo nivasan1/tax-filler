@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/CosmWasm/wasmd v0.31.0
-	github.com/cosmos/cosmos-sdk v0.46.8
+	github.com/cosmos/cosmos-sdk v0.45.14
 	github.com/jackc/pgx/v5 v5.3.1
 	github.com/redis/go-redis/v9 v9.0.2
 	github.com/spf13/viper v1.15.0
@@ -140,7 +140,7 @@ require (
 )
 
 replace (
-	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.46.8
+	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.45.14
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
