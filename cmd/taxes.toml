@@ -1,0 +1,18 @@
+[juno-1]
+skip_address="juno10g0l3hd9sau3vnjrayjhergcpxemucxcspgnn4"
+token="ujuno"
+redis_address="localhost:6379"
+db_host="juno-1-db.skip-internal.money"
+db_password="O82F$6tlgqCu"
+node_address="https://juno-rpc.stakely.io"
+num_threads=100
+test_accts=["juno1tgkw5qkul06edjsvq59kwuknfdyapyrg4a5gsk", "juno1ptcltmzllgu0am4c0wmgdlkv5y7r5grsn9h76m"]
+[phoenix-1]
+skip_address="terra1d5fzv2y8fpdax4u2nnzrn5uf9ghyu5sxr865uy"
+token="uluna"
+redis_address="localhost:6379"
+db_host="phoenix-1-db.skip-internal.money"
+db_password="O82F$6tlgqCu"
+node_address="https://terra-rpc.stakely.io"
+num_threads=100
+test_accts=["terra1ju9cgpl78qszngdkvrpjht00f7wf6hql6l9v8q", "terra14up70mj7sru47vwszh7mze2vt8h4kg2jtn4c8m"]
