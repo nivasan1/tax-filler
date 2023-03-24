@@ -36,7 +36,10 @@ type Tx interface {
 	//  - amount sent
 	//  - fee amount
 	//  - if the tx was a test tx
-	CheckTx(string) (int64, int64)
+	CheckAuctionFeeTx(string) (int64, int64)
+	// Given a txhash (corresponding to a validator payment), check that the sender is the auction house addresss
+	// and return the receiver
+	CheckValPaymentTx(string, string) (string)
 }
 
 type TxChecker struct {
@@ -51,19 +54,36 @@ func NewTxChecker(nodeAddr, auctionHouse string) *TxChecker {
 	}
 }
 
-func (t TxChecker) CheckTx(txhash string) (int64, int64) {
+func (t TxChecker) CheckValPaymentTx(txhash string, skipAddress string) string {
+	tx := txBytes(t.nodeAddr, txhash)
+	if tx == nil {
+		return ""
+	}
+	feeTx := getFeeTx(tx)
+	if feeTx == nil {
+		fmt.Println("error unmarshalling tx", txhash)
+		return ""
+	}	
+	// check that the fromAddress is the skipAddress
+	for _, msg := range feeTx.GetMsgs() {
+		if bankMsg, ok := msg.(*banktypes.MsgSend); ok {
+			if bankMsg.FromAddress == skipAddress {
+				fmt.Println("found val-payment TX!!")
+				return bankMsg.ToAddress
+			}
+		}
+	}
+	return ""
+}
+
+func (t TxChecker) CheckAuctionFeeTx(txhash string) (int64, int64) {
 	tx := txBytes(t.nodeAddr, txhash)
 	if tx == nil {
 		return 0, 0
 	}
-	txRaw, err := authtx.DefaultTxDecoder(txCodec)(tx)
-	if err != nil {
-		fmt.Println("error unmarshalling tx: ", txhash, err)
-		return 0, 0
-	}
-	// check that the tx is a fee tx (all sdk txs are)
-	feeTx, ok := txRaw.(sdk.FeeTx)
-	if !ok {
+	feeTx := getFeeTx(tx)
+	if feeTx == nil {
+		fmt.Println("error unmarshalling tx", txhash)
 		return 0, 0
 	}
 	// iterate over messages in tx, and check if message type is a send
@@ -77,6 +97,20 @@ func (t TxChecker) CheckTx(txhash string) (int64, int64) {
 		continue
 	}
 	return 0, 0
+}
+
+func getFeeTx(txBytes []byte) sdk.FeeTx {
+	txRaw, err := authtx.DefaultTxDecoder(txCodec)(txBytes)
+	if err != nil {
+		fmt.Println("error unmarshalling tx: ", err)
+		return nil
+	}
+	// check that the tx is a fee tx (all sdk txs are)
+	feeTx, ok := txRaw.(sdk.FeeTx)
+	if !ok {
+		return nil 
+	}
+	return feeTx
 }
 
 func txBytes(nodeAddr, txHash string) []byte {

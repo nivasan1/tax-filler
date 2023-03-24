@@ -120,15 +120,18 @@ func (t *TaxFiller) workerFunc(index, indexIncrement int, rows *ThreadSafeRowDat
 			fmt.Printf("bundle at height %d with no txs\n", row.height)
 			continue
 		}
-		// set the tax data in redis for the current bundle (the first will be the valPayment)
-		if err := t.store.Set(calculateTaxesForValidatorPayment(row, txs[len(txs)-1], t.chainID, t.token, t.skipAddress, test)); err != nil {
-			fmt.Println("error setting tax data in redis:", err)
-			return
+		// check the val-payment tx
+		if paymentAddr :=  t.checker.CheckValPaymentTx(txs[len(txs) - 1], t.skipAddress); paymentAddr != "" {
+			// set the tax data in redis for the current bundle (the first will be the valPayment)
+			if err := t.store.Set(calculateTaxesForValidatorPayment(row, txs[len(txs)-1], t.chainID, t.token, t.skipAddress, paymentAddr, test)); err != nil {
+				fmt.Println("error setting tax data in redis:", err)
+				return
+			}
 		}
 		// iterate over txs, and check if the tx was an auction payment
 		amtSent, amtFees := int64(0), int64(0)
 		for _, tx := range txs {
-			amtSent, amtFees = t.checker.CheckTx(tx)
+			amtSent, amtFees = t.checker.CheckAuctionFeeTx(tx)
 			if amtSent != 0 || amtFees != 0 {
 				break
 			}
@@ -142,8 +145,8 @@ func (t *TaxFiller) workerFunc(index, indexIncrement int, rows *ThreadSafeRowDat
 	return
 }
 
-func calculateTaxesForValidatorPayment(row RowData, tx, chainID, token, skipAddr string, test bool) TaxData {
-	return rowDataToTaxData(row, tx, chainID, token, skipAddr, row.validatorAddr, test, row.valProfit, row.valFees)
+func calculateTaxesForValidatorPayment(row RowData, tx, chainID, token, skipAddr, paymentAddr string, test bool) TaxData {
+	return rowDataToTaxData(row, tx, chainID, token, skipAddr, paymentAddr, test, row.valProfit, row.valFees)
 }
 
 func calculateTaxesForAuctionFee(row RowData, tx, chainID, token, skipAddr string, test bool, amtSent, fees int64) TaxData {
