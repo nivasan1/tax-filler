@@ -61,27 +61,27 @@ func stringToTaxData(s string) *TaxData {
 	datas := strings.Split(s, ",")
 	date, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", datas[2])
 	if err != nil {
-		fmt.Println("error parsing tax-data:", err)
+		fmt.Println("error parsing tax-data", s, ":", err)
 		return nil
 	}
 	amount, err := strconv.Atoi(datas[7])
 	if err != nil {
-		fmt.Println("error parsing tax-data:", err)
+		fmt.Println("error parsing tax-data", s, ":", err)
 		return nil
 	}
 	feeAmount, err := strconv.Atoi(datas[8])
 	if err != nil {
-		fmt.Println("error parsing tax-data:", err)
+		fmt.Println("error parsing tax-data", s, ":", err)
 		return nil
 	}
 	height, err := strconv.Atoi(datas[9])
 	if err != nil {
-		fmt.Println("error parsing tax-data:", err)
+		fmt.Println("error parsing tax-data", s, ":", err)
 		return nil
 	}
 	test, err := strconv.ParseBool(datas[10])
 	if err != nil {
-		fmt.Println("error parsing tax-data:", err)
+		fmt.Println("error parsing tax-data", s, ":", err)
 		return nil
 	}
 	return &TaxData{
@@ -137,6 +137,7 @@ func (r RedisClient) GetAllTaxData(chainID string) ([]TaxData, error) {
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println(taxData)
 		t := stringToTaxData(taxData)
 		if t != nil {
 			taxDatas = append(taxDatas, *t)

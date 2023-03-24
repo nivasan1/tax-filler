@@ -184,5 +184,10 @@ func writeCSV(tds []TaxData, outname string) error {
 			return err
 		}
 	}
+	// flush buffer to ensure all records are written
+	csvFile.Flush()
+	if err := csvFile.Error(); err != nil {
+		fmt.Println("error flushing to disk: ", err)
+	}
 	return nil
 }

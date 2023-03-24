@@ -11,6 +11,7 @@ import (
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	encoding "github.com/evmos/ethermint/encoding/codec"
 	"io/ioutil"
 	"net/http"
 )
@@ -24,6 +25,7 @@ func init() {
 	banktypes.RegisterInterfaces(reg)
 	cryptocodec.RegisterInterfaces(reg)
 	wasmtypes.RegisterInterfaces(reg)
+	encoding.RegisterInterfaces(reg)
 	txCodec = codec.NewProtoCodec(reg)
 }
 
@@ -79,6 +81,7 @@ func (t TxChecker) CheckTx(txhash string) (int64, int64) {
 
 func txBytes(nodeAddr, txHash string) []byte {
 	req := fmt.Sprintf("%s/tx?hash=0x%s", nodeAddr, txHash)
+	fmt.Println(req)
 	resp, err := http.Get(req)
 	if err != nil {
 		return nil
