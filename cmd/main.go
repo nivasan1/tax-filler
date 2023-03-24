@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"os"
-	"log"
 	"github.com/skip-mev/tax-filler"
+	"log"
+	"os"
 )
 
 var (
@@ -23,10 +23,10 @@ func main() {
 	log.Println(*config)
 	signals := make(chan struct{}, len(*config))
 	// create / run tax-filler
-	for chainId  := range *config {
+	for chainId := range *config {
 		go func(chainId string) {
 			tf := taxfiller.NewTaxFiller(*config, chainId)
-			if err :=  tf.FillTaxData(); err != nil {
+			if err := tf.FillTaxData(); err != nil {
 				log.Fatal(err)
 			}
 			signals <- struct{}{}

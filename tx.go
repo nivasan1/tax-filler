@@ -4,13 +4,13 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	encoding "github.com/evmos/ethermint/encoding/codec"
 	"io/ioutil"
 	"net/http"
@@ -39,7 +39,7 @@ type Tx interface {
 	CheckAuctionFeeTx(string) (int64, int64)
 	// Given a txhash (corresponding to a validator payment), check that the sender is the auction house addresss
 	// and return the receiver
-	CheckValPaymentTx(string, string) (string)
+	CheckValPaymentTx(string, string) string
 }
 
 type TxChecker struct {
@@ -63,7 +63,7 @@ func (t TxChecker) CheckValPaymentTx(txhash string, skipAddress string) string {
 	if feeTx == nil {
 		fmt.Println("error unmarshalling tx", txhash)
 		return ""
-	}	
+	}
 	// check that the fromAddress is the skipAddress
 	for _, msg := range feeTx.GetMsgs() {
 		if bankMsg, ok := msg.(*banktypes.MsgSend); ok {
@@ -108,7 +108,7 @@ func getFeeTx(txBytes []byte) sdk.FeeTx {
 	// check that the tx is a fee tx (all sdk txs are)
 	feeTx, ok := txRaw.(sdk.FeeTx)
 	if !ok {
-		return nil 
+		return nil
 	}
 	return feeTx
 }

@@ -19,6 +19,7 @@ skip_address="evmos17yqtnk08ly94lgz3fzagfu2twsws33z7cpkxa2"
 token="aevmos"
 redis_address="localhost:6379"
 db_host="evmos_9001-2-db.skip-internal.money"
+db_password="O82FtlgqCu"
 node_address="https://eth.bd.evmos.org:26657"
 num_threads=100
 test_accts=["evmos14gvalqguklks99yerdlajemhtwdz4mw4v4aznf", "evmos14gvalqguklks99yerdlajemhtwdz4mw4v4aznf"]

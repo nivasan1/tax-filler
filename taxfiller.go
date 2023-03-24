@@ -1,12 +1,12 @@
 package taxfiller
 
 import (
+	"encoding/csv"
 	"fmt"
-	"strings"
-	"sync"
 	"log"
 	"os"
-	"encoding/csv"
+	"strings"
+	"sync"
 )
 
 // spawns workers number of threads to begin collecting data and posting to redis, once all threads have finished their work
@@ -104,7 +104,7 @@ func (t *TaxFiller) workerFunc(index, indexIncrement int, rows *ThreadSafeRowDat
 	// when finished with work, signal main thread
 	defer func() {
 		signal <- struct{}{}
-		}()
+	}()
 	for {
 		// update the index by increment
 		index += indexIncrement
@@ -121,7 +121,7 @@ func (t *TaxFiller) workerFunc(index, indexIncrement int, rows *ThreadSafeRowDat
 			continue
 		}
 		// check the val-payment tx
-		if paymentAddr :=  t.checker.CheckValPaymentTx(txs[len(txs) - 1], t.skipAddress); paymentAddr != "" {
+		if paymentAddr := t.checker.CheckValPaymentTx(txs[len(txs)-1], t.skipAddress); paymentAddr != "" {
 			// set the tax data in redis for the current bundle (the first will be the valPayment)
 			if err := t.store.Set(calculateTaxesForValidatorPayment(row, txs[len(txs)-1], t.chainID, t.token, t.skipAddress, paymentAddr, test)); err != nil {
 				fmt.Println("error setting tax data in redis:", err)

@@ -47,7 +47,14 @@ type PeersDB struct {
 }
 
 func NewPeersDB(password, host string) *PeersDB {
-	config, err := pgx.ParseConfig(fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s ",
+	fmt.Println(fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s",
+		dbUser,
+		password,
+		host,
+		dbPort,
+		dbName,
+	))
+	config, err := pgx.ParseConfig(fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s",
 		dbUser,
 		password,
 		host,

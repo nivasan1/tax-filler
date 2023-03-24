@@ -3,10 +3,10 @@ package taxfiller
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
-	"sort"
 
 	redis "github.com/redis/go-redis/v9"
 )
@@ -48,7 +48,7 @@ func (t TaxData) ToRecord() []string {
 		t.Date.String(),
 		t.SenderAddress,
 		t.ReceiverAddress,
-		t.Moniker, 
+		t.Moniker,
 		t.Token,
 		strconv.Itoa(int(t.Amount)),
 		t.Token,
